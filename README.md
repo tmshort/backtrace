@@ -9,8 +9,15 @@ Download this repo and run
 ```
 git clone https://github.com/tmhort/backtrace.git --recurse-submodules
 cd backtrace
-./run.sh
+make
 ./test_bt
 <crash>
 gdb test_bt core
+```
+
+Alternatively, the `run.sh` script can be used to build everything.
+
+Do the following to increase debug from libunwind:
+```
+export UNW_DEBUG_LEVEL=15
 ```
