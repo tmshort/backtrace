@@ -1,0 +1,6 @@
+[submodule "libunwind"]
+	path = libunwind
+	url = https://github.com/libunwind/libunwind
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl
