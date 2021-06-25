@@ -28,24 +28,23 @@ int f3(uint8_t n1, uint16_t n2, uint64_t n3, uint8_t n4, uint32_t n5, uint8_t n6
   volatile uint64_t ctr = n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + rand();
 
   unsigned long r = 0;
-  unsigned long *a, *b, *orig_a, *orig_b;
+  unsigned long *a, *b;
   //unsigned long a[4] = {18446744073709551612UL,};
   //unsigned long b[4] = {1,};
+  unsigned long ac[32];
+  unsigned long bc[32];
   unsigned long nd  = 18446744073709551615UL;
   unsigned long n0[2] = {0,1};
   int num = 4;
 
-  orig_a = a = (unsigned long *)malloc(32 * sizeof(*a));
-  orig_b = b = (unsigned long *)malloc(32 * sizeof(*b));
-  memset(a, 0, 32 * sizeof(*a));
-  memset(b, 0, 32 * sizeof(*b));
-  a = &a[28];
-  b = &b[28];
+  memset(ac, 0, sizeof(ac));
+  memset(ac, 0, sizeof(bc));
+  a = &ac[28];
+  b = &bc[28];
   a[0] = 18446744073709551612UL;
   b[0] = 1;
   bn_mul_mont(&r, a, b, &nd, n0, num);
 
-  free(orig_a); free(orig_b);
   return ctr + nd;
 }
 
@@ -128,6 +127,8 @@ int main()
 
     auto start = std::chrono::system_clock::now();
     uint64_t numOps = 100000000000UL;
+    unsigned char *func_start = (unsigned char*)bn_mul_mont;
+    unsigned char *func_end = func_start + 660; /* functon is 660 bytes */
 
     static int ctr = 0;
     for (uint64_t i = 0; i < numOps; i++)
@@ -141,7 +142,10 @@ int main()
         std::cout << "recorded stack: ";
         for (int i = 0; i < recorded; i++)
         {
-          std::cout << ".";
+          if (func_start < frames[i] && frames[i] < func_end)
+            std::cout << "#";
+          else
+            std::cout << ".";
           //std::cout << frames[i] << " ";
         }
         std::cout << std::endl;
